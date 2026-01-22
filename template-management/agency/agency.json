@@ -1,0 +1,2151 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Agency API",
+    "description": "API to manage the integration of external agency providers",
+    "version": "0.0.1",
+    "license": {
+      "name": "Prisa Media",
+      "url": "https://www.prisa.com/es"
+    },
+    "contact": {
+      "email": "multimediadesarrollo@prisamedia.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://des-mediaservices.prisamedia.com/agency-integration/v1",
+      "description": "Development Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Agencies",
+      "description": "Everything about Agencies",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://prisamedia.atlassian.net/wiki/spaces/PMS/pages/1103986705/Dise+o+API+-+Microservicio+Agency"
+      }
+    },
+    {
+      "name": "Video Publications",
+      "description": "Everything about Video Publications from Agencies",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://prisamedia.atlassian.net/wiki/spaces/PMS/pages/1103986705/Dise+o+API+-+Microservicio+Agency"
+      }
+    }
+  ],
+  "paths": {
+    "/agencies": {
+      "options": {
+        "operationId": "corsAgencies",
+        "summary": "CORS support",
+        "description": "Enable CORS by returning appropriate headers",
+        "responses": {
+          "200": {
+            "description": "CORS response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Credentials": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Agencies"
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "mock",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS, GET, POST, PUT, DELETE, PATCH'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization, Accept, X-Requested-With, x-api-key'",
+                "method.response.header.Access-Control-Allow-Credentials": "'true'"
+              },
+              "responseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getAgenciesCollection",
+        "summary": "List of Agencies",
+        "description": "List of Agencies",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+              ]
+            },
+            "example": "active",
+            "description": "Filter by state"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "API",
+                "feed"
+              ]
+            },
+            "example": "API",
+            "description": "Filter by type"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Getty Images",
+            "description": "Filter by name"
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false,
+            "description": "Current page number for pagination",
+            "example": 1
+          },
+          {
+            "name": "perPageElements",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 0,
+              "maximum": 100
+            },
+            "required": false,
+            "description": "Number of items per page for pagination",
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Agencies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyGet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      },
+      "post": {
+        "operationId": "postAgencyCollection",
+        "summary": "Create Agency",
+        "description": "Create Agency",
+        "tags": [
+          "Agencies"
+        ],
+        "requestBody": {
+          "description": "Create a new Agency",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgencyWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Agency Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage422"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      }
+    },
+    "/agencies/{agencyId}": {
+      "options": {
+        "operationId": "corsAgenciesById",
+        "summary": "CORS support",
+        "description": "Enable CORS by returning appropriate headers",
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CORS response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Credentials": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Agencies"
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "mock",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS, GET, POST, PUT, DELETE, PATCH'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization, Accept, X-Requested-With, x-api-key'",
+                "method.response.header.Access-Control-Allow-Credentials": "'true'"
+              },
+              "responseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getAgency",
+        "summary": "Get Agency by ID",
+        "description": "Get Agency by ID",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage404"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      },
+      "put": {
+        "operationId": "putAgency",
+        "summary": "Update Agency",
+        "description": "Update Agency",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "requestBody": {
+          "description": "Update a Agency",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgencyWritePut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Agency Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Agency not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage404"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage422"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      },
+      "patch": {
+        "operationId": "patchAgency",
+        "summary": "Update Partial Agency",
+        "description": "Update Partial Agency",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "requestBody": {
+          "description": "Update Partial Agency",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgencyUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Agency Partial Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Agency not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage404"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage422"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      },
+      "delete": {
+        "operationId": "deleteAgency",
+        "summary": "Delete Agency",
+        "description": "Delete Agency",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Agency Deleted"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Agency not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage404"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      }
+    },
+    "/agencies/{agencyId}/videos": {
+      "options": {
+        "operationId": "corsAgenciesVideos",
+        "summary": "CORS support",
+        "description": "Enable CORS by returning appropriate headers",
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CORS response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Credentials": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Agencies"
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "mock",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS, GET, POST, PUT, DELETE, PATCH'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization, Accept, X-Requested-With, x-api-key'",
+                "method.response.header.Access-Control-Allow-Credentials": "'true'"
+              },
+              "responseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getAgencyVideos",
+        "summary": "Get videos list by Agency ID",
+        "description": "Get videos list by Agency ID",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "allowEmptyValue": false,
+            "description": "Agency ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          {
+            "name": "destinationClient",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "mediateca"
+            },
+            "description": "Destination client filter",
+            "example": "mediateca"
+          },
+          {
+            "name": "businessUnitId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 37
+            },
+            "description": "Business Unit ID filter",
+            "example": 37
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false,
+            "description": "Current page number for pagination",
+            "example": 1
+          },
+          {
+            "name": "perPageElements",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 0,
+              "maximum": 100
+            },
+            "required": false,
+            "description": "Number of items per page for pagination",
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of Videos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage404"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      }
+    },
+    "/video-publications": {
+      "options": {
+        "operationId": "corsVideoPublications",
+        "summary": "CORS support",
+        "description": "Enable CORS by returning appropriate headers",
+        "responses": {
+          "200": {
+            "description": "CORS response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Credentials": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Video Publications"
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "mock",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS, GET, POST, PUT, DELETE, PATCH'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization, Accept, X-Requested-With, x-api-key'",
+                "method.response.header.Access-Control-Allow-Credentials": "'true'"
+              },
+              "responseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getVideoPublicationsCollection",
+        "summary": "Get all video publications in Our System",
+        "description": "Get all video publications with optional filters",
+        "tags": [
+          "Video Publications"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Filter by Agency ID"
+          },
+          {
+            "name": "destinationClient",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "mediateca"
+            },
+            "description": "Filter by Destination Client",
+            "example": "mediateca"
+          },
+          {
+            "name": "businessUnitId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 37
+            },
+            "description": "Filter by Business Unit ID",
+            "example": 37
+          },
+          {
+            "name": "videoAgencyId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "7001377063"
+            },
+            "description": "Filter by Video Agency ID",
+            "example": "7001377063"
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false,
+            "description": "Current page number for pagination",
+            "example": 1
+          },
+          {
+            "name": "perPageElements",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 0,
+              "maximum": 100
+            },
+            "required": false,
+            "description": "Number of items per page for pagination",
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of video publications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoPublicationList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_manager_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      }
+    },
+    "/agencies/{agencyId}/videos/publish": {
+      "options": {
+        "operationId": "corsAgenciesPublish",
+        "summary": "CORS support",
+        "description": "Enable CORS by returning appropriate headers",
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Agency ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CORS response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Credentials": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Agencies"
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "mock",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS, GET, POST, PUT, DELETE, PATCH'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization, Accept, X-Requested-With, x-api-key'",
+                "method.response.header.Access-Control-Allow-Credentials": "'true'"
+              },
+              "responseTemplates": {
+                "application/json": "{}"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "publishVideo",
+        "summary": "Publish Video in destination",
+        "description": "Publish Video in destination",
+        "tags": [
+          "Agencies"
+        ],
+        "parameters": [
+          {
+            "name": "agencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Agency ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoPublished"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Video published successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoPublishedSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage401"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage403"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Agency or video not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage404"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage405"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage422"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage500"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${agency_published_video_function_arn}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"body\": $input.json('$')}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgencyBase": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Provider name",
+            "example": "Efe"
+          },
+          "description": {
+            "type": "string",
+            "description": "Provider description",
+            "example": "EFE es la primera agencia de noticias en castellano, con 85 años de trayectoria. Que avalan su imparcialidad, su potencia, su credibilidad y su inmediatez. comercial@agenciaefe.es +34 913 467 100 "
+          },
+          "image": {
+            "type": "string",
+            "description": "Provider image URL",
+            "example": "https://agenciaefe.es/wp-content/uploads/2022/03/nuevo-logo-oficial-prueba-web.jpeg"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of integration used by the agency",
+            "enum": [
+              "api",
+              "feed"
+            ],
+            "example": "api"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL of the provider to get the data",
+            "example": "https://apinews.efeservicios.com"
+          },
+          "auth": {
+            "type": "string",
+            "description": "Identify secret for credentials",
+            "example": "dev/mediateca/agency/credential/efe"
+          },
+          "allowExternalPagination": {
+            "type": "boolean",
+            "description": "Indicates if the provider supports pagination",
+            "example": true
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Indicates if the agency is active",
+            "example": true,
+            "default": true
+          }
+        }
+      },
+      "Agency": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AgencyBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "agencyId": {
+                "type": "string",
+                "format": "uuid",
+                "example": "ef0d619d-ffc2-4759-a8df-1fd90de28320",
+                "description": "Provider ID with auto-generated UUID"
+              },
+              "createdAt": {
+                "example": "2024-04-03T19:46:14+02:00",
+                "description": "Created in our system",
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "example": "2024-04-03T19:46:14+02:00",
+                "description": "Updated in our system",
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "AgencyGet": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Agency"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "AgencyUpdate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AgencyBase"
+          }
+        ]
+      },
+      "AgencyRead": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Agency"
+          }
+        }
+      },
+      "AgencyWrite": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AgencyBase"
+          }
+        ],
+        "required": [
+          "name",
+          "description",
+          "image"
+        ]
+      },
+      "AgencyWritePut": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AgencyBase"
+          }
+        ],
+        "required": [
+          "name",
+          "description",
+          "image",
+          "type",
+          "url",
+          "auth",
+          "allowExternalPagination",
+          "active"
+        ]
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "currentPage": {
+            "type": "integer",
+            "example": 1,
+            "description": "Current page. First page is 1"
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 1,
+            "description": "Total pages. This number is calculated based on the total elements and the page size"
+          },
+          "perPageElements": {
+            "type": "integer",
+            "example": 10,
+            "description": "Number of requested items - max allowed 100"
+          },
+          "currentPageElements": {
+            "type": "integer",
+            "example": 1,
+            "description": "Number of elements in the current page"
+          },
+          "totalElements": {
+            "type": "integer",
+            "example": 1,
+            "description": "Total number of elements"
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "previous": {
+                "type": "string",
+                "example": "/agency-integration/v1/agencies?perPageElements=10&currentPage=1"
+              },
+              "next": {
+                "type": "string",
+                "example": "/agency-integration/v1/agencies?perPageElements=10&currentPage=2"
+              }
+            }
+          }
+        }
+      },
+      "Video": {
+        "type": "object",
+        "properties": {
+          "videoAgencyId": {
+            "type": "string",
+            "description": "Video identifier from the agency",
+            "example": "7001377063"
+          },
+          "videoUrl": {
+            "type": "string",
+            "description": "Video Agency URL",
+            "example": "https://apinews.efeservicios.com/files/get/CfDJ8DY2r1a1udpNgDeYL5fBDgPxTFnoYsWg2qFMAGyovt19FBcCoeHCmI76sbVDKUB6ZoyXc1tkjV6UgC7b0PUP_5hnwLgJPOHyHrMG9GIFqbQOTi2NonXhAz8fnlYRGuDz8QmKyT87TxvIiTTAgeEQNvVMoR34eye8dk26sRPiTdLV-9xNph6N8qUAcIicU-WLS1CCq3_ZCiW33HdzHa5BZdxt88jKlWcUCtFqcwnr9gKCo9j0UZDvqQZljZDC1Cdyw1FyMsGnr5c1a3LO-uj6THhwTtm_3rqbgwmbeuJ4wCRhrgD_My078uCZYv663JnDo2SKXnUJpugXNG52wmT73GsC7JsJCbthGy1L4zi_sa5AeUSVJyNsM_QzJzAXNPjqVg"
+          },
+          "name": {
+            "type": "string",
+            "description": "Video Agency name",
+            "example": "Tegucigalpa se declara en alerta máxima por daños causados por la tormenta tropical Sara"
+          },
+          "description": {
+            "type": "string",
+            "description": "Video Agency description",
+            "example": "Tegucigalpa, 17 nov (EFE).- Tegucigalpa, la capital de Honduras"
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Indicates if the video is published in our system",
+            "example": true
+          },
+          "date": {
+            "type": "string",
+            "description": "Video date in Agency",
+            "example": "2024-11-18T03:28:59+02:00"
+          },
+          "image": {
+            "type": "string",
+            "description": "Video image Agency URL",
+            "example": "https://apinews.efeservicios.com/files/get/CfDJ8DY2r1a1udpNgDeYL5fBDgP97jx_FklIQAwgzOBdeLnSuBnphUhvuvp8-rxP_XOSjitzlp5b3vFIbgHg_X8xs4WglekstjnnBxyCUPKY9SRaoHGJdkiTuDhlSPctS0yAChszJjeziklBQPw8i3Tq38X5Y4Ee7cGOecKNGlnHFJNi2h5eRtUvMbeqa4jTCd83FTAYhJJ1SGiFNvhe9Ighhxqt-jH0SuN1uMaCqBmKePvRBLMUf26MffBjNpjuF6o2e-G6Ttvi-yxHng-CsHwq5FEZgMoPneETxDnnVg6CXQ_IdQN86TZuyXazfdBbBPwo1ceBZ9jl-cKhoU4bDq48oBbdmq_l2Oc-4Jm-AoDVGGpi"
+          }
+        }
+      },
+      "VideoList": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Video"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "VideoPublished": {
+        "type": "object",
+        "required": [
+          "destinationClient",
+          "businessUnitId",
+          "videoAgencyId",
+          "videoIdref",
+          "videoUrl",
+          "name",
+          "description",
+          "published",
+          "image"
+        ],
+        "properties": {
+          "destinationClient": {
+            "type": "string",
+            "description": "Identifies the name of the client which wants to publish the video",
+            "example": "mediateca"
+          },
+          "businessUnitId": {
+            "type": "integer",
+            "description": "Business unit id to publish the video in the destination",
+            "example": 37
+          },
+          "videoAgencyId": {
+            "type": "string",
+            "description": "Video identifier from the agency",
+            "example": "7001377063"
+          },
+          "videoIdref": {
+            "type": "string",
+            "description": "Auto-generated video ID reference",
+            "example": "7001417108_1731918832"
+          },
+          "videoUrl": {
+            "type": "string",
+            "description": "Video URL",
+            "example": "https://apinews.efeservicios.com/files/get/CfDJ8DY2r1a1udpNgDeYL5fBDgPxTFnoYsWg2qFMAGyovt19FBcCoeHCmI76sbVDKUB6ZoyXc1tkjV6UgC7b0PUP_5hnwLgJPOHyHrMG9GIFqbQOTi2NonXhAz8fnlYRGuDz8QmKyT87TxvIiTTAgeEQNvVMoR34eye8dk26sRPiTdLV-9xNph6N8qUAcIicU-WLS1CCq3_ZCiW33HdzHa5BZdxt88jKlWcUCtFqcwnr9gKCo9j0UZDvqQZljZDC1Cdyw1FyMsGnr5c1a3LO-uj6THhwTtm_3rqbgwmbeuJ4wCRhrgD_My078uCZYv663JnDo2SKXnUJpugXNG52wmT73GsC7JsJCbthGy1L4zi_sa5AeUSVJyNsM_QzJzAXNPjqVg"
+          },
+          "name": {
+            "type": "string",
+            "description": "Video name",
+            "example": "Tegucigalpa se declara en alerta máxima por daños causados por la tormenta tropical Sara"
+          },
+          "description": {
+            "type": "string",
+            "description": "Video description",
+            "example": "Tegucigalpa, 17 nov (EFE).- Tegucigalpa, la capital de Honduras"
+          },
+          "published": {
+            "type": "boolean",
+            "description": "Indicates if the video has been published",
+            "example": true
+          },
+          "image": {
+            "type": "string",
+            "description": "Image URL",
+            "example": "https://apinews.efeservicios.com/files/get/CfDJ8DY2r1a1udpNgDeYL5fBDgP97jx_FklIQAwgzOBdeLnSuBnphUhvuvp8-rxP_XOSjitzlp5b3vFIbgHg_X8xs4WglekstjnnBxyCUPKY9SRaoHGJdkiTuDhlSPctS0yAChszJjeziklBQPw8i3Tq38X5Y4Ee7cGOecKNGlnHFJNi2h5eRtUvMbeqa4jTCd83FTAYhJJ1SGiFNvhe9Ighhxqt-jH0SuN1uMaCqBmKePvRBLMUf26MffBjNpjuF6o2e-G6Ttvi-yxHng-CsHwq5FEZgMoPneETxDnnVg6CXQ_IdQN86TZuyXazfdBbBPwo1ceBZ9jl-cKhoU4bDq48oBbdmq_l2Oc-4Jm-AoDVGGpi"
+          }
+        }
+      },
+      "VideoPublishedData": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "integer",
+            "description": "Video ID in our system",
+            "example": 242874
+          },
+          "videoIdref": {
+            "type": "string",
+            "description": "Video Idref in business Unit.",
+            "example": "7001de-df417108-17319-fds18832"
+          },
+          "videoAgencyId": {
+            "type": "string",
+            "description": "Video identifier from the agency",
+            "example": "7001377063"
+          },
+          "agencyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agency ID",
+            "example": "98e4567e-e89b-12d3-a456-426614174999"
+          },
+          "destinationClient": {
+            "type": "string",
+            "description": "Identifies the name of the client which wants to publish the video",
+            "example": "mediateca"
+          },
+          "businessUnitId": {
+            "type": "integer",
+            "description": "Business unit id to publish the video in the destination",
+            "example": 37
+          }
+        }
+      },
+      "VideoPublication": {
+        "type": "object",
+        "properties": {
+          "videoPublicationId": {
+            "type": "string",
+            "description": "Composite unique identifier formed by concatenating agencyId and videoAgencyId with hyphen to prevent duplicate publications",
+            "example": "98e4567e-e89b-12d3-a456-426614174999-12345678-1234-1234-1234-123456789abc"
+          },
+          "agencyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agency identifier",
+            "example": "98e4567e-e89b-12d3-a456-426614174999"
+          },
+          "videoAgencyId": {
+            "type": "string",
+            "description": "Video identifier from the agency",
+            "example": "7001377063"
+          },
+          "publications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "destinationClient": {
+                  "type": "string",
+                  "description": "Client destination identifier",
+                  "example": "mediateca"
+                },
+                "businessUnitId": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "List of business unit identifiers",
+                  "example": [37, 35]
+                }
+              }
+            }
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Publication timestamp",
+            "example": "2024-06-27T12:47:12+02:00"
+          }
+        }
+      },
+      "VideoPublicationList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoPublication"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "VideoPublishedSuccess": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/VideoPublishedData"
+          }
+        }
+      },
+      "ErrorMessageDetails": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Field that caused the specific problem."
+          },
+          "issue": {
+            "type": "string",
+            "description": "Detail the reason that caused the specific problem."
+          }
+        },
+        "description": "Detail the field and the reason that caused the specific problem."
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Unique and clear identifier that represents the type of error that occurred. It must be human readable, it cannot be a code. Mandatory field, in uppercase and joined by underscores.",
+            "enum": [
+              "INVALID_INPUT",
+              "MISSING_FIELD",
+              "INVALID_FORMAT",
+              "UNAUTHORIZED",
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "FORBIDDEN",
+              "RESOURCE_NOT_FOUND",
+              "METHOD_NOT_ALLOWED",
+              "UNSUPPORTED_METHOD",
+              "INVALID_METHOD",
+              "BUSINESS_RULE_VIOLATION",
+              "VALUE_OUT_OF_RANGE",
+              "INTERNAL_SERVER_ERROR",
+              "DATABASE_ERROR",
+              "METHOD_NOT_IMPLEMENTED",
+              "UNSUPPORTED_OPERATION",
+              "FEATURE_NOT_SUPPORTED",
+              "BAD_GATEWAY",
+              "UPSTREAM_SERVER_ERROR",
+              "PROXY_ERROR",
+              "NETWORK_ERROR",
+              "INVALID_RESPONSE",
+              "SERVICE_UNAVAILABLE",
+              "MAINTENANCE_MODE",
+              "OVERLOADED",
+              "TEMPORARILY_UNAVAILABLE",
+              "GATEWAY_TIMEOUT",
+              "UPSTREAM_TIMEOUT",
+              "NETWORK_TIMEOUT"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "Describe the cause of the error in a concise manner."
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Unique identifier typically generated for each request made to an API"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorMessageDetails"
+            }
+          }
+        }
+      },
+      "ErrorMessage400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "INVALID_INPUT",
+            "message": "Bad request. The server could not understand the request due to an invalid or incomplete format. Please check the data sent and try again.",
+            "requestId": "123e4567-e89b-12d3",
+            "details": [
+              {
+                "field": "name",
+                "issue": "Name is to short"
+              }
+            ]
+          }
+        }
+      },
+      "ErrorMessage401": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "UNAUTHORIZED",
+            "message": "Access denied. You need to provide valid credentials to access this resource.",
+            "requestId": "123e4567-e89b-12d3",
+            "details": []
+          }
+        }
+      },
+      "ErrorMessage403": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "FORBIDDEN",
+            "message": "Access restricted. You do not have sufficient permissions on this resource.",
+            "requestId": "123e4567-e89b-12d3",
+            "details": []
+          }
+        }
+      },
+      "ErrorMessage404": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "RESOURCE_NOT_FOUND",
+            "message": "Resource not found. The resource you are looking for does not exist.",
+            "requestId": "123e4567-e89b-12d3",
+            "details": []
+          }
+        }
+      },
+      "ErrorMessage405": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "METHOD_NOT_ALLOWED",
+            "message": "Method not allowed. The method used is not allowed for this resource. See the documentation for supported methods.",
+            "requestId": "123e4567-e89b-12d3",
+            "details": []
+          }
+        }
+      },
+      "ErrorMessage422": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "BUSINESS_RULE_VIOLATION",
+            "message": "Unprocessable entity. The server understands the content, but the request contains data that cannot be processed because it violates business rules.",
+            "details": [
+              {
+                "field": "agency_id",
+                "issue": "Agency ID is not valid"
+              }
+            ]
+          }
+        }
+      },
+      "ErrorMessage500": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage"
+          }
+        },
+        "example": {
+          "error": {
+            "code": "INTERNAL_SERVER_ERROR",
+            "message": "Server crashed. Something went wrong, we are working to resolve the issue as soon as possible. Please try again later.",
+            "requestId": "123e4567-e89b-12d3",
+            "details": []
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": []
+}
